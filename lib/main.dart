@@ -1,8 +1,7 @@
+import 'package:fetch_data/state_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-//final usersProvider = ChangeNotifierProvider((ref) => Users());
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'model/user.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -23,65 +22,58 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends HookWidget {
+class MyHomePage extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    List items = [
-      "1",
-      "2",
-    ];
+  Widget build(BuildContext context,
+      T Function<T>(ProviderBase<Object, T> provider) watch) {
+    AsyncValue<List<User>> users = watch(userStateFuture);
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Listing Users"),
-      ),
-      body: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return getCard();
+      appBar: AppBar(title: Text('Listing Users')),
+      body: users.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) =>
+              Center(child: Text('${error.toString()}')),
+          data: (value) {
+            return ListView.builder(
+                itemCount: value.length,
+                itemBuilder: (context, index) {
+                  var fullName = value[index].name.title +
+                      " " +
+                      value[index].name.first +
+                      " " +
+                      value[index].name.last;
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(value[index].picture.large),
+                            ),
+                            SizedBox(width: 20.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  fullName.toString(),
+                                  style: TextStyle(fontSize: 17.0),
+                                ),
+                                SizedBox(height: 10.0),
+                                Text(
+                                  value[index].email.toString(),
+                                  style: TextStyle(
+                                      fontSize: 15.0, color: Colors.grey),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  );
+                });
           }),
-    );
-  }
-
-  Widget getCard() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListTile(
-          title: Row(
-            children: <Widget>[
-              Container(
-                width: 60.0,
-                height: 60.0,
-                decoration: BoxDecoration(
-                  color: Colors.indigo,
-                  borderRadius: BorderRadius.circular(60 / 2),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                          "https://images.unsplash.com/photo-1522542194-2c2e6ffcf7d8?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTIzfHxwcm9maWxlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60")),
-                ),
-              ),
-              SizedBox(
-                width: 20.0,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Marcus Stevens",
-                    style: TextStyle(fontSize: 17.0),
-                  ),
-                  SizedBox(height: 10.0),
-                  Text(
-                    "masamarun@gmail.com",
-                    style: TextStyle(fontSize: 17.0, color: Colors.grey),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
