@@ -64,20 +64,25 @@ class MyHomePage extends ConsumerWidget {
                                   radius: 24.0,
                                 ),
                                 SizedBox(width: 20.0),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      fullName.toString(),
-                                      style: TextStyle(fontSize: 17.0),
-                                    ),
-                                    SizedBox(height: 10.0),
-                                    Text(
-                                      value[index].email.toString(),
-                                      style: TextStyle(
-                                          fontSize: 15.0, color: Colors.grey),
-                                    ),
-                                  ],
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        fullName.toString(),
+                                        style: TextStyle(fontSize: 17.0),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 10.0),
+                                      Text(
+                                        value[index].email.toString(),
+                                        style: TextStyle(
+                                            fontSize: 16.0, color: Colors.grey),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
