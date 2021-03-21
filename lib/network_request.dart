@@ -11,7 +11,7 @@ List<User> parseUsers(String responseBody) {
 }
 
 Future<List<User>> fetchUsers() async {
-  final response = await http.get("https://randomuser.me/api/?results=10");
+  final response = await http.get("https://randomuser.me/api/?results=20");
   if (response.statusCode == 200) {
     return compute(parseUsers, response.body);
   } else {
